@@ -17,6 +17,9 @@ class SoundBoardApp extends HTMLElement {
             this.currentPlaylist = e.detail;
             this.render();
         });
+        this.shadowRoot.addEventListener("add-to-playlist", (e) => {
+            this.addToPlaylist(e.detail.audioName, e.detail.playlistName);
+        });
     }
 
     uploadAudio() {
@@ -48,6 +51,15 @@ class SoundBoardApp extends HTMLElement {
         localStorage.setItem("audioList", JSON.stringify(this.audioList));
         localStorage.setItem("playlists", JSON.stringify(this.playlists));
         this.render();
+    }
+
+    addToPlaylist(audioName, playlistName) {
+        const audio = this.audioList.find(a => a.name === audioName);
+        if (audio && this.playlists[playlistName]) {
+            this.playlists[playlistName].push(audio);
+            localStorage.setItem("playlists", JSON.stringify(this.playlists));
+            this.render();
+        }
     }
 
     toggleFavorite(audioName) {
@@ -98,7 +110,8 @@ class SoundBoardApp extends HTMLElement {
                         `<audio-player 
                             name="${audio.name}"
                             src="${audio.src}"
-                            isFavorite="${this.favList.includes(audio.name)}">
+                            isFavorite="${this.favList.includes(audio.name)}"
+                            playlist="${this.currentPlaylist}">
                         </audio-player>`).join('')}
                 </div>
             </div>
