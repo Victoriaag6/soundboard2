@@ -4,7 +4,7 @@ class SoundBoardApp extends HTMLElement {
         this.attachShadow({ mode: "open" });
         this.audioList = JSON.parse(localStorage.getItem("audioList")) || [];
         this.favList = JSON.parse(localStorage.getItem("favList")) || [];
-        this.playlists = JSON.parse(localStorage.getItem("playlists")) || { "All": this.audioList, "Fav": this.favList };
+        this.playlists = JSON.parse(localStorage.getItem("playlists")) || { "All": this.audioList, "Fav": this.getFavoriteAudios() };
         this.currentPlaylist = "All";
         this.render();
     }
@@ -23,6 +23,22 @@ class SoundBoardApp extends HTMLElement {
         this.shadowRoot.addEventListener("delete-playlist", (e) => {
             this.deletePlaylist(e.detail);
         });
+    }
+
+    getFavoriteAudios() {
+        return this.audioList.filter(audio => this.favList.includes(audio.name));
+    }
+
+    toggleFavorite(audioName) {
+        if (this.favList.includes(audioName)) {
+            this.favList = this.favList.filter(name => name !== audioName);
+        } else {
+            this.favList.push(audioName);
+        }
+        this.playlists["Fav"] = this.getFavoriteAudios();
+        localStorage.setItem("favList", JSON.stringify(this.favList));
+        localStorage.setItem("playlists", JSON.stringify(this.playlists));
+        this.render();
     }
 
     createPlaylist() {
