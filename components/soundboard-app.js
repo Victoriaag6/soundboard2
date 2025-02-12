@@ -20,6 +20,27 @@ class SoundBoardApp extends HTMLElement {
         this.shadowRoot.addEventListener("add-to-playlist", (e) => {
             this.addToPlaylist(e.detail.audioName, e.detail.playlistName);
         });
+        this.shadowRoot.addEventListener("delete-playlist", (e) => {
+            this.deletePlaylist(e.detail);
+        });
+    }
+
+    createPlaylist() {
+        const playlistName = prompt("Nombre de la nueva playlist:");
+        if (playlistName && !this.playlists[playlistName]) {
+            this.playlists[playlistName] = [];
+            localStorage.setItem("playlists", JSON.stringify(this.playlists));
+            this.render();
+        }
+    }
+
+    deletePlaylist(playlistName) {
+        if (playlistName !== "All" && playlistName !== "Fav") {
+            delete this.playlists[playlistName];
+            localStorage.setItem("playlists", JSON.stringify(this.playlists));
+            this.currentPlaylist = "All";
+            this.render();
+        }
     }
 
     uploadAudio() {
@@ -79,18 +100,6 @@ class SoundBoardApp extends HTMLElement {
         this.render();
     }
 
-    toggleFavorite(audioName) {
-        if (this.favList.includes(audioName)) {
-            this.favList = this.favList.filter(name => name !== audioName);
-        } else {
-            this.favList.push(audioName);
-        }
-        this.playlists["Fav"] = this.audioList.filter(audio => this.favList.includes(audio.name));
-        localStorage.setItem("favList", JSON.stringify(this.favList));
-        localStorage.setItem("playlists", JSON.stringify(this.playlists));
-        this.render();
-    }
-
     render() {
         const displayedAudios = this.playlists[this.currentPlaylist] || [];
         this.shadowRoot.innerHTML = `
@@ -105,11 +114,15 @@ class SoundBoardApp extends HTMLElement {
                     </div>
                     <button id="add-audio" class="add-btn">+ Add Sound</button>
                     <button id="create-playlist" class="add-btn">+ New Playlist</button>
-                    <button id="import-playlist" class="add-btn">📂 Import Playlist</button>
                 </div>
                 <div class="tab-container">
                     ${Object.keys(this.playlists).map(playlist => 
-                        `<button class="tab-btn ${this.currentPlaylist === playlist ? 'active' : ''}" id="${playlist}-tab">${playlist}</button>`
+                        `<div class="playlist-container">
+                            <button class="tab-btn ${this.currentPlaylist === playlist ? 'active' : ''}" id="${playlist}-tab">${playlist}</button>
+                            ${playlist !== "All" && playlist !== "Fav" ? `<button class="delete-playlist" data-playlist="${playlist}">
+                                <img src="assets/delete.png" alt="Eliminar" class="delete-icon">
+                            </button>` : ''}
+                        </div>`
                     ).join('')}
                 </div>
                 <div class="audio-list">
@@ -125,6 +138,15 @@ class SoundBoardApp extends HTMLElement {
         `;
 
         this.shadowRoot.querySelector("#add-audio").addEventListener("click", () => this.uploadAudio());
+        this.shadowRoot.querySelector("#create-playlist").addEventListener("click", () => this.createPlaylist());
+        
+        this.shadowRoot.querySelectorAll(".delete-playlist").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const playlistName = e.target.closest("button").dataset.playlist;
+                this.deletePlaylist(playlistName);
+            });
+        });
+
         Object.keys(this.playlists).forEach(playlist => {
             this.shadowRoot.querySelector(`#${playlist}-tab`).addEventListener("click", () => {
                 this.currentPlaylist = playlist;
