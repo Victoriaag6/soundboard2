@@ -27,7 +27,7 @@ class AudioPlayer extends HTMLElement {
                         <img src="assets/delete.png" alt="Eliminar" class="delete-icon">
                     </button>
                     <select class="playlist-select" id="playlist-select-${name}" name="playlist">
-                        <option value="">Añadir a Playlist</option>
+                        <option value="">+Playlist</option>
                     </select>
                 </div>
                 <audio controls>

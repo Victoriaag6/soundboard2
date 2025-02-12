@@ -56,10 +56,27 @@ class SoundBoardApp extends HTMLElement {
     addToPlaylist(audioName, playlistName) {
         const audio = this.audioList.find(a => a.name === audioName);
         if (audio && this.playlists[playlistName]) {
-            this.playlists[playlistName].push(audio);
-            localStorage.setItem("playlists", JSON.stringify(this.playlists));
-            this.render();
+            const alreadyInPlaylist = this.playlists[playlistName].some(a => a.name === audioName);
+            if (!alreadyInPlaylist) {
+                this.playlists[playlistName].push(audio);
+                localStorage.setItem("playlists", JSON.stringify(this.playlists));
+                this.render();
+            }
         }
+    }
+
+    deleteAudio(audioName) {
+        if (this.currentPlaylist === "All") {
+            this.audioList = this.audioList.filter(audio => audio.name !== audioName);
+            Object.keys(this.playlists).forEach(playlist => {
+                this.playlists[playlist] = this.playlists[playlist].filter(audio => audio.name !== audioName);
+            });
+        } else {
+            this.playlists[this.currentPlaylist] = this.playlists[this.currentPlaylist].filter(audio => audio.name !== audioName);
+        }
+        localStorage.setItem("audioList", JSON.stringify(this.audioList));
+        localStorage.setItem("playlists", JSON.stringify(this.playlists));
+        this.render();
     }
 
     toggleFavorite(audioName) {
@@ -72,16 +89,6 @@ class SoundBoardApp extends HTMLElement {
         localStorage.setItem("favList", JSON.stringify(this.favList));
         localStorage.setItem("playlists", JSON.stringify(this.playlists));
         this.render();
-    }
-
-    deleteAudio(audioName) {
-        this.audioList = this.audioList.filter(audio => audio.name !== audioName);
-        Object.keys(this.playlists).forEach(playlist => {
-            this.playlists[playlist] = this.playlists[playlist].filter(audio => audio.name !== audioName);
-        });
-        localStorage.setItem("audioList", JSON.stringify(this.audioList));
-        localStorage.setItem("playlists", JSON.stringify(this.playlists));
-        setTimeout(() => this.render(), 10);
     }
 
     render() {
