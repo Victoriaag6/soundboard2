@@ -12,7 +12,7 @@ class AudioPlayer extends HTMLElement {
         const name = this.getAttribute("name") || "Unknown";
         const src = this.getAttribute("src") || "";
         const isFavorite = this.getAttribute("isFavorite") === "true";
-        const favIcon = isFavorite ? "Fav.png" : "NoFav.png";
+        const favIcon = isFavorite ? "assets/Fav.png" : "assets/NoFav.png";
 
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="styles.css">
@@ -23,7 +23,7 @@ class AudioPlayer extends HTMLElement {
                         <img src="${favIcon}" alt="Favorito" class="fav-icon">
                     </button>
                     <button class="delete">
-                        <img src="delete.png" alt="Eliminar" class="delete-icon">
+                        <img src="assets/delete.png" alt="Eliminar" class="delete-icon">
                     </button>
                 </div>
                 <audio controls>
@@ -33,14 +33,10 @@ class AudioPlayer extends HTMLElement {
             </div>
         `;
 
-        // Seleccionar los botones y añadir eventos
         const favButton = this.shadowRoot.querySelector(".fav");
         const deleteButton = this.shadowRoot.querySelector(".delete");
 
-        favButton.addEventListener("click", () => {
-            this.toggleFavorite();
-        });
-
+        favButton.addEventListener("click", () => this.toggleFavorite());
         deleteButton.addEventListener("click", () => {
             this.dispatchEvent(new CustomEvent("delete-audio", { 
                 bubbles: true, 
@@ -53,10 +49,8 @@ class AudioPlayer extends HTMLElement {
     toggleFavorite() {
         const isFavorite = this.getAttribute("isFavorite") === "true";
         this.setAttribute("isFavorite", isFavorite ? "false" : "true");
-
-        // Actualizar el icono de favorito sin recargar toda la interfaz
         const favIcon = this.shadowRoot.querySelector(".fav-icon");
-        favIcon.src = this.getAttribute("isFavorite") === "true" ? "Fav.png" : "NoFav.png";
+        favIcon.src = this.getAttribute("isFavorite") === "true" ? "assets/Fav.png" : "assets/NoFav.png";
 
         this.dispatchEvent(new CustomEvent("toggle-favorite", { 
             bubbles: true, 
