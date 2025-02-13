@@ -68,7 +68,7 @@ body {
     padding: 20px;
 }
 
-.tab-btn {
+.tab-btn, #create-playlist {
     background: rgba(255, 255, 255, 0.2);
     border: none;
     padding: 12px 24px;
@@ -77,13 +77,14 @@ body {
     cursor: pointer;
     color: white;
     transition: background 0.3s ease;
+    text-align: center; /* Center the text inside the buttons */
 }
 
 .tab-btn.active {
     background: rgba(255, 255, 255, 0.5);
 }
 
-.tab-btn:hover {
+.tab-btn:hover, #create-playlist:hover {
     background: rgba(255, 255, 255, 0.4);
 }
 
@@ -239,4 +240,23 @@ audio {
     height: 16px;
     margin-left: 8px;
     vertical-align: middle;
+}
+.search-bar {
+    padding: 16px;
+    font-size: 18px;
+    border: none;
+    border-radius: 35px;
+    margin-right: 10px;
+    width: 100%;
+    max-width: 300px;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-bar:focus {
+    background: rgba(255, 255, 255, 0.4);
+    outline: none;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }

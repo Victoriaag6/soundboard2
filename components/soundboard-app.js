@@ -8,6 +8,7 @@ class SoundBoardApp extends HTMLElement {
         this.favList = JSON.parse(localStorage.getItem("favList")) || [];
         this.playlists = JSON.parse(localStorage.getItem("playlists")) || { "All": this.audioList, "Fav": SoundBoardMethods.getFavoriteAudios(this.audioList, this.favList) };
         this.currentPlaylist = "All";
+        this.searchQuery = "";
         this.render();
     }
 
@@ -120,8 +121,15 @@ class SoundBoardApp extends HTMLElement {
         console.error(e);
     }
 
+    handleSearch(event) {
+        this.searchQuery = event.target.value.toLowerCase();
+        this.render();
+    }
+
     render() {
-        const displayedAudios = this.playlists[this.currentPlaylist] || [];
+        const displayedAudios = this.playlists[this.currentPlaylist].filter(audio => 
+            audio.name.toLowerCase().includes(this.searchQuery)
+        ) || [];
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="styles.css">
             <link rel="icon" href="data:;base64,iVBORw0KGgo=">
@@ -134,7 +142,7 @@ class SoundBoardApp extends HTMLElement {
                         </div>
                     </div>
                     <button id="add-audio" class="add-btn">+ Add Sound</button>
-                    <button id="create-playlist" class="add-btn">+ New Playlist</button>
+                    <input type="text" id="search-bar" class="search-bar" placeholder="Search...">
                     <button id="export-playlists" class="add-btn">Export Playlists</button>
                     <button id="import-playlists" class="add-btn">Import Playlists</button>
                 </div>
@@ -147,6 +155,9 @@ class SoundBoardApp extends HTMLElement {
                             </button>
                         </div>`
                     ).join('')}
+                    <div class="playlist-container">
+                        <button id="create-playlist" class="tab-btn">+ New Playlist</button>
+                    </div>
                 </div>
                 <div class="audio-list">
                     ${displayedAudios.map(audio => 
@@ -160,6 +171,7 @@ class SoundBoardApp extends HTMLElement {
             </div>
         `;
 
+        this.shadowRoot.querySelector("#search-bar").addEventListener("input", (e) => this.handleSearch(e));
         this.shadowRoot.querySelector("#add-audio").addEventListener("click", () => this.uploadAudio());
         this.shadowRoot.querySelector("#create-playlist").addEventListener("click", () => this.createPlaylist());
         this.shadowRoot.querySelector("#export-playlists").addEventListener("click", () => SoundBoardMethods.exportPlaylists(this.playlists, this.currentPlaylist));
