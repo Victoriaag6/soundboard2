@@ -30,6 +30,16 @@ export class SoundBoardMethods {
         return { favList, playlists };
     }
 
+    static exportPlaylists(playlists) {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(playlists));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "playlists.json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    }
+
     static createPlaylist(playlists) {
         const playlistName = prompt("Nombre de la nueva playlist:");
         if (playlistName && !playlists[playlistName]) {
@@ -54,6 +64,28 @@ export class SoundBoardMethods {
             localStorage.setItem("playlists", JSON.stringify(playlists));
         }
         return playlists;
+    }
+
+    static importPlaylists(callback) {
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = "application/json";
+        fileInput.addEventListener("change", (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const importedPlaylists = JSON.parse(e.target.result);
+                        callback(importedPlaylists);
+                    } catch (error) {
+                        alert("Error importing playlists: " + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+        fileInput.click();
     }
 
     static uploadAudio(audioList, playlists, addAudioCallback) {

@@ -68,6 +68,14 @@ class SoundBoardApp extends HTMLElement {
         this.render();
     }
 
+    importPlaylists() {
+        SoundBoardMethods.importPlaylists((importedPlaylists) => {
+            this.playlists = importedPlaylists;
+            localStorage.setItem("playlists", JSON.stringify(this.playlists));
+            this.render();
+        });
+    }
+
     render() {
         const displayedAudios = this.playlists[this.currentPlaylist] || [];
         this.shadowRoot.innerHTML = `
@@ -83,6 +91,8 @@ class SoundBoardApp extends HTMLElement {
                     </div>
                     <button id="add-audio" class="add-btn">+ Add Sound</button>
                     <button id="create-playlist" class="add-btn">+ New Playlist</button>
+                    <button id="export-playlists" class="add-btn">Export Playlists</button>
+                    <button id="import-playlists" class="add-btn">Import Playlists</button>
                 </div>
                 <div class="tab-container">
                     ${Object.keys(this.playlists).map(playlist => 
@@ -108,7 +118,9 @@ class SoundBoardApp extends HTMLElement {
 
         this.shadowRoot.querySelector("#add-audio").addEventListener("click", () => this.uploadAudio());
         this.shadowRoot.querySelector("#create-playlist").addEventListener("click", () => this.createPlaylist());
-        
+        this.shadowRoot.querySelector("#export-playlists").addEventListener("click", () => SoundBoardMethods.exportPlaylists(this.playlists));
+        this.shadowRoot.querySelector("#import-playlists").addEventListener("click", () => this.importPlaylists());
+
         this.shadowRoot.querySelectorAll(".delete-playlist").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 const playlistName = e.target.closest("button").dataset.playlist;
