@@ -30,11 +30,17 @@ export class SoundBoardMethods {
         return { favList, playlists };
     }
 
-    static exportPlaylists(playlists) {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(playlists));
+    static exportPlaylists(playlists, playlistName) {
+        const playlistToExport = playlistName ? { [playlistName]: playlists[playlistName] } : playlists;
+        const fileName = prompt("Ingrese el nombre del archivo para exportar:", "playlists.json");
+        if (!fileName) {
+            alert("El nombre del archivo no puede estar vacío.");
+            return;
+        }
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(playlistToExport));
         const downloadAnchorNode = document.createElement('a');
         downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", "playlists.json");
+        downloadAnchorNode.setAttribute("download", fileName);
         document.body.appendChild(downloadAnchorNode);
         downloadAnchorNode.click();
         downloadAnchorNode.remove();

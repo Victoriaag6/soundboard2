@@ -70,7 +70,7 @@ class SoundBoardApp extends HTMLElement {
 
     importPlaylists() {
         SoundBoardMethods.importPlaylists((importedPlaylists) => {
-            this.playlists = importedPlaylists;
+            this.playlists = { ...this.playlists, ...importedPlaylists };
             localStorage.setItem("playlists", JSON.stringify(this.playlists));
             this.render();
         });
@@ -118,7 +118,7 @@ class SoundBoardApp extends HTMLElement {
 
         this.shadowRoot.querySelector("#add-audio").addEventListener("click", () => this.uploadAudio());
         this.shadowRoot.querySelector("#create-playlist").addEventListener("click", () => this.createPlaylist());
-        this.shadowRoot.querySelector("#export-playlists").addEventListener("click", () => SoundBoardMethods.exportPlaylists(this.playlists));
+        this.shadowRoot.querySelector("#export-playlists").addEventListener("click", () => SoundBoardMethods.exportPlaylists(this.playlists, this.currentPlaylist));
         this.shadowRoot.querySelector("#import-playlists").addEventListener("click", () => this.importPlaylists());
 
         this.shadowRoot.querySelectorAll(".delete-playlist").forEach(btn => {
