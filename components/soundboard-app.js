@@ -1,11 +1,4 @@
-import { getFavoriteAudios } from './methods/getFavoriteAudios.js';
-import { toggleFavorite } from './methods/toggleFavorite.js';
-import { createPlaylist } from './methods/createPlaylist.js';
-import { deletePlaylist } from './methods/deletePlaylist.js';
-import { uploadAudio } from './methods/uploadAudio.js';
-import { addAudio } from './methods/addAudio.js';
-import { addToPlaylist } from './methods/addToPlaylist.js';
-import { deleteAudio } from './methods/deleteAudio.js';
+import { SoundBoardMethods } from './SoundBoardMethods.js';
 
 class SoundBoardApp extends HTMLElement {
     constructor() {
@@ -13,7 +6,7 @@ class SoundBoardApp extends HTMLElement {
         this.attachShadow({ mode: "open" });
         this.audioList = JSON.parse(localStorage.getItem("audioList")) || [];
         this.favList = JSON.parse(localStorage.getItem("favList")) || [];
-        this.playlists = JSON.parse(localStorage.getItem("playlists")) || { "All": this.audioList, "Fav": getFavoriteAudios(this.audioList, this.favList) };
+        this.playlists = JSON.parse(localStorage.getItem("playlists")) || { "All": this.audioList, "Fav": SoundBoardMethods.getFavoriteAudios(this.audioList, this.favList) };
         this.currentPlaylist = "All";
         this.render();
     }
@@ -35,41 +28,41 @@ class SoundBoardApp extends HTMLElement {
     }
 
     toggleFavorite(audioName) {
-        const result = toggleFavorite(audioName, this.favList, this.playlists);
+        const result = SoundBoardMethods.toggleFavorite(audioName, this.favList, this.playlists);
         this.favList = result.favList;
         this.playlists = result.playlists;
         this.render();
     }
 
     createPlaylist() {
-        this.playlists = createPlaylist(this.playlists);
+        this.playlists = SoundBoardMethods.createPlaylist(this.playlists);
         this.render();
     }
 
     deletePlaylist(playlistName) {
-        this.playlists = deletePlaylist(playlistName, this.playlists);
+        this.playlists = SoundBoardMethods.deletePlaylist(playlistName, this.playlists);
         this.currentPlaylist = "All";
         this.render();
     }
 
     uploadAudio() {
-        uploadAudio(this.audioList, this.playlists, (audio) => this.addAudio(audio));
+        SoundBoardMethods.uploadAudio(this.audioList, this.playlists, (audio) => this.addAudio(audio));
     }
 
     addAudio(audio) {
-        const result = addAudio(audio, this.audioList, this.playlists);
+        const result = SoundBoardMethods.addAudio(audio, this.audioList, this.playlists);
         this.audioList = result.audioList;
         this.playlists = result.playlists;
         this.render();
     }
 
     addToPlaylist(audioName, playlistName) {
-        this.playlists = addToPlaylist(audioName, playlistName, this.audioList, this.playlists);
+        this.playlists = SoundBoardMethods.addToPlaylist(audioName, playlistName, this.audioList, this.playlists);
         this.render();
     }
 
     deleteAudio(audioName) {
-        const result = deleteAudio(audioName, this.currentPlaylist, this.audioList, this.playlists);
+        const result = SoundBoardMethods.deleteAudio(audioName, this.currentPlaylist, this.audioList, this.playlists);
         this.audioList = result.audioList;
         this.playlists = result.playlists;
         this.render();
