@@ -97,10 +97,10 @@ class SoundBoardApp extends HTMLElement {
                 <div class="tab-container">
                     ${Object.keys(this.playlists).map(playlist => 
                         `<div class="playlist-container">
-                            <button class="tab-btn ${this.currentPlaylist === playlist ? 'active' : ''}" id="${playlist}-tab">${playlist}</button>
-                            ${playlist !== "All" && playlist !== "Fav" ? `<button class="delete-playlist" data-playlist="${playlist}">
-                                <img src="assets/delete.png" alt="Eliminar" class="delete-icon">
-                            </button>` : ''}
+                            <button class="tab-btn ${this.currentPlaylist === playlist ? 'active' : ''}" id="${playlist}-tab">
+                                ${playlist}
+                                ${playlist !== "All" && playlist !== "Fav" ? `<img src="assets/delete.png" alt="Eliminar" class="delete-icon small-icon" data-playlist="${playlist}">` : ''}
+                            </button>
                         </div>`
                     ).join('')}
                 </div>
@@ -121,9 +121,9 @@ class SoundBoardApp extends HTMLElement {
         this.shadowRoot.querySelector("#export-playlists").addEventListener("click", () => SoundBoardMethods.exportPlaylists(this.playlists, this.currentPlaylist));
         this.shadowRoot.querySelector("#import-playlists").addEventListener("click", () => this.importPlaylists());
 
-        this.shadowRoot.querySelectorAll(".delete-playlist").forEach(btn => {
+        this.shadowRoot.querySelectorAll(".delete-icon").forEach(btn => {
             btn.addEventListener("click", (e) => {
-                const playlistName = e.target.closest("button").dataset.playlist;
+                const playlistName = e.target.dataset.playlist;
                 this.deletePlaylist(playlistName);
             });
         });

@@ -1,3 +1,5 @@
+import { showModal } from './modal.js';
+
 export class SoundBoardMethods {
     static getFavoriteAudios(audioList, favList) {
         return audioList.filter(audio => favList.includes(audio.name));
@@ -16,7 +18,6 @@ export class SoundBoardMethods {
         } catch (e) {
             if (e.name === 'QuotaExceededError') {
                 alert("No se pudo actualizar la lista de favoritos. Se ha excedido el límite de almacenamiento.");
-                // Revert changes to favList and playlists
                 if (favList.includes(audioName)) {
                     favList = favList.filter(name => name !== audioName);
                 } else {
@@ -47,20 +48,21 @@ export class SoundBoardMethods {
     }
 
     static createPlaylist(playlists) {
-        const playlistName = prompt("Nombre de la nueva playlist:");
-        if (playlistName && !playlists[playlistName]) {
-            playlists[playlistName] = [];
-            try {
-                localStorage.setItem("playlists", JSON.stringify(playlists));
-            } catch (e) {
-                if (e.name === 'QuotaExceededError') {
-                    alert("No se pudo crear la playlist. Se ha excedido el límite de almacenamiento.");
-                    delete playlists[playlistName]; // Clean up the added playlist
-                } else {
-                    throw e;
+        showModal("Nombre de la nueva playlist:", (playlistName) => {
+            if (playlistName && !playlists[playlistName]) {
+                playlists[playlistName] = [];
+                try {
+                    localStorage.setItem("playlists", JSON.stringify(playlists));
+                } catch (e) {
+                    if (e.name === 'QuotaExceededError') {
+                        alert("No se pudo crear la playlist. Se ha excedido el límite de almacenamiento.");
+                        delete playlists[playlistName]; 
+                    } else {
+                        throw e;
+                    }
                 }
             }
-        }
+        });
         return playlists;
     }
 
@@ -103,13 +105,14 @@ export class SoundBoardMethods {
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    const audioName = prompt("Nombre del audio:");
-                    if (!audioName || audioList.some(audio => audio.name === audioName)) {
-                        alert("El nombre del audio ya existe o es inválido.");
-                        return;
-                    }
-                    const audio = { name: audioName, src: e.target.result };
-                    addAudioCallback(audio);
+                    showModal("Nombre del audio:", (audioName) => {
+                        if (!audioName || audioList.some(audio => audio.name === audioName)) {
+                            alert("El nombre del audio ya existe o es inválido.");
+                            return;
+                        }
+                        const audio = { name: audioName, src: e.target.result };
+                        addAudioCallback(audio);
+                    });
                 };
                 reader.readAsDataURL(file);
             }
