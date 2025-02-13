@@ -28,52 +28,96 @@ class SoundBoardApp extends HTMLElement {
     }
 
     toggleFavorite(audioName) {
-        const result = SoundBoardMethods.toggleFavorite(audioName, this.favList, this.playlists);
-        this.favList = result.favList;
-        this.playlists = result.playlists;
-        this.render();
+        try {
+            const result = SoundBoardMethods.toggleFavorite(audioName, this.favList, this.playlists);
+            this.favList = result.favList;
+            this.playlists = result.playlists;
+            this.render();
+        } catch (e) {
+            this.handleError(e);
+        }
     }
 
     createPlaylist() {
-        this.playlists = SoundBoardMethods.createPlaylist(this.playlists);
-        this.render();
+        try {
+            this.playlists = SoundBoardMethods.createPlaylist(this.playlists, () => this.render());
+        } catch (e) {
+            this.handleError(e);
+        }
     }
 
     deletePlaylist(playlistName) {
-        this.playlists = SoundBoardMethods.deletePlaylist(playlistName, this.playlists);
-        this.currentPlaylist = "All";
-        this.render();
+        try {
+            this.playlists = SoundBoardMethods.deletePlaylist(playlistName, this.playlists);
+            this.currentPlaylist = "All";
+            this.render();
+        } catch (e) {
+            this.handleError(e);
+        }
     }
 
     uploadAudio() {
-        SoundBoardMethods.uploadAudio(this.audioList, this.playlists, (audio) => this.addAudio(audio));
+        try {
+            SoundBoardMethods.uploadAudio(this.audioList, this.playlists, (audio) => this.addAudio(audio));
+        } catch (e) {
+            this.handleError(e);
+        }
     }
 
     addAudio(audio) {
-        const result = SoundBoardMethods.addAudio(audio, this.audioList, this.playlists);
-        this.audioList = result.audioList;
-        this.playlists = result.playlists;
-        this.render();
+        try {
+            const result = SoundBoardMethods.addAudio(audio, this.audioList, this.playlists);
+            this.audioList = result.audioList;
+            this.playlists = result.playlists;
+            this.render();
+        } catch (e) {
+            this.handleError(e);
+        }
     }
 
     addToPlaylist(audioName, playlistName) {
-        this.playlists = SoundBoardMethods.addToPlaylist(audioName, playlistName, this.audioList, this.playlists);
-        this.render();
+        try {
+            this.playlists = SoundBoardMethods.addToPlaylist(audioName, playlistName, this.audioList, this.playlists);
+            this.render();
+        } catch (e) {
+            this.handleError(e);
+        }
     }
 
     deleteAudio(audioName) {
-        const result = SoundBoardMethods.deleteAudio(audioName, this.currentPlaylist, this.audioList, this.playlists);
-        this.audioList = result.audioList;
-        this.playlists = result.playlists;
-        this.render();
+        try {
+            const result = SoundBoardMethods.deleteAudio(audioName, this.currentPlaylist, this.audioList, this.playlists);
+            this.audioList = result.audioList;
+            this.playlists = result.playlists;
+            this.render();
+        } catch (e) {
+            this.handleError(e);
+        }
     }
 
     importPlaylists() {
-        SoundBoardMethods.importPlaylists((importedPlaylists) => {
-            this.playlists = { ...this.playlists, ...importedPlaylists };
-            localStorage.setItem("playlists", JSON.stringify(this.playlists));
-            this.render();
-        });
+        try {
+            SoundBoardMethods.importPlaylists((importedPlaylists) => {
+                this.playlists = { ...this.playlists, ...importedPlaylists };
+                localStorage.setItem("playlists", JSON.stringify(this.playlists));
+                this.render();
+            });
+        } catch (e) {
+            this.handleError(e);
+        }
+    }
+
+    handleError(e) {
+        if (e.name === 'QuotaExceededError') {
+            alert("No se pudo completar la operación. Se ha excedido el límite de almacenamiento.");
+        } else if (e.name === 'SyntaxError') {
+            alert("Error en el formato de los datos. Por favor, verifica los datos ingresados.");
+        } else if (e.name === 'TypeError') {
+            alert("Error de tipo. Por favor, verifica los datos ingresados.");
+        } else {
+            alert("Ocurrió un error inesperado: " + e.message);
+        }
+        console.error(e);
     }
 
     render() {

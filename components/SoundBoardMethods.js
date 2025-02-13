@@ -5,6 +5,15 @@ export class SoundBoardMethods {
         return audioList.filter(audio => favList.includes(audio.name));
     }
 
+    static isValidName(name) {
+        const regex = /^[a-zA-Z0-9 _-]+$/;
+        return regex.test(name);
+    }
+
+    static isUniqueName(name, list) {
+        return !list.some(item => item.name === name);
+    }
+
     static toggleFavorite(audioName, favList, playlists) {
         if (favList.includes(audioName)) {
             favList = favList.filter(name => name !== audioName);
@@ -47,19 +56,30 @@ export class SoundBoardMethods {
         downloadAnchorNode.remove();
     }
 
-    static createPlaylist(playlists) {
+    static createPlaylist(playlists, renderCallback) {
         showModal("Nombre de la nueva playlist:", (playlistName) => {
-            if (playlistName && !playlists[playlistName]) {
-                playlists[playlistName] = [];
-                try {
-                    localStorage.setItem("playlists", JSON.stringify(playlists));
-                } catch (e) {
-                    if (e.name === 'QuotaExceededError') {
-                        alert("No se pudo crear la playlist. Se ha excedido el límite de almacenamiento.");
-                        delete playlists[playlistName]; 
-                    } else {
-                        throw e;
-                    }
+            if (!playlistName) {
+                alert("El nombre de la playlist no puede estar vacío.");
+                return;
+            }
+            if (!SoundBoardMethods.isValidName(playlistName)) {
+                alert("El nombre de la playlist contiene caracteres no permitidos.");
+                return;
+            }
+            if (playlists[playlistName]) {
+                alert("El nombre de la playlist ya existe.");
+                return;
+            }
+            playlists[playlistName] = [];
+            try {
+                localStorage.setItem("playlists", JSON.stringify(playlists));
+                renderCallback(); // Llama a la función de renderizado después de agregar la nueva playlist
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    alert("No se pudo crear la playlist. Se ha excedido el límite de almacenamiento.");
+                    delete playlists[playlistName];
+                } else {
+                    throw e;
                 }
             }
         });
@@ -106,8 +126,16 @@ export class SoundBoardMethods {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     showModal("Nombre del audio:", (audioName) => {
-                        if (!audioName || audioList.some(audio => audio.name === audioName)) {
-                            alert("El nombre del audio ya existe o es inválido.");
+                        if (!audioName) {
+                            alert("El nombre del audio no puede estar vacío.");
+                            return;
+                        }
+                        if (!SoundBoardMethods.isValidName(audioName)) {
+                            alert("El nombre del audio contiene caracteres no permitidos.");
+                            return;
+                        }
+                        if (!SoundBoardMethods.isUniqueName(audioName, audioList)) {
+                            alert("El nombre del audio ya existe.");
                             return;
                         }
                         const audio = { name: audioName, src: e.target.result };
