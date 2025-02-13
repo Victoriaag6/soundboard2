@@ -72,12 +72,13 @@ class SoundBoardApp extends HTMLElement {
         const displayedAudios = this.playlists[this.currentPlaylist] || [];
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="styles.css">
+            <link rel="icon" href="data:;base64,iVBORw0KGgo=">
             <div class="container">
                 <div class="header">
                     <div class="title-background">
                         <div class="title-container">
                             <span class="title">SoundBoard</span>
-                            <span class="subtitle">Your personal sound collection</span>
+                            <span class="subtitle">Instrumental assistant</span>
                         </div>
                     </div>
                     <button id="add-audio" class="add-btn">+ Add Sound</button>

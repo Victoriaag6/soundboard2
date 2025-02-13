@@ -10,8 +10,23 @@ export class SoundBoardMethods {
             favList.push(audioName);
         }
         playlists["Fav"] = SoundBoardMethods.getFavoriteAudios(playlists["All"], favList);
-        localStorage.setItem("favList", JSON.stringify(favList));
-        localStorage.setItem("playlists", JSON.stringify(playlists));
+        try {
+            localStorage.setItem("favList", JSON.stringify(favList));
+            localStorage.setItem("playlists", JSON.stringify(playlists));
+        } catch (e) {
+            if (e.name === 'QuotaExceededError') {
+                alert("No se pudo actualizar la lista de favoritos. Se ha excedido el límite de almacenamiento.");
+                // Revert changes to favList and playlists
+                if (favList.includes(audioName)) {
+                    favList = favList.filter(name => name !== audioName);
+                } else {
+                    favList.push(audioName);
+                }
+                playlists["Fav"] = SoundBoardMethods.getFavoriteAudios(playlists["All"], favList);
+            } else {
+                throw e;
+            }
+        }
         return { favList, playlists };
     }
 
@@ -19,7 +34,16 @@ export class SoundBoardMethods {
         const playlistName = prompt("Nombre de la nueva playlist:");
         if (playlistName && !playlists[playlistName]) {
             playlists[playlistName] = [];
-            localStorage.setItem("playlists", JSON.stringify(playlists));
+            try {
+                localStorage.setItem("playlists", JSON.stringify(playlists));
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    alert("No se pudo crear la playlist. Se ha excedido el límite de almacenamiento.");
+                    delete playlists[playlistName]; // Clean up the added playlist
+                } else {
+                    throw e;
+                }
+            }
         }
         return playlists;
     }
