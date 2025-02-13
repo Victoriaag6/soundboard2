@@ -102,6 +102,13 @@ body {
     width: 350px;
     display: flex;
     flex-direction: column;
+    animation: fadeIn 0.5s ease-in-out, scaleUp 0.5s ease-in-out;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.audio-container:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transform: translateY(-5px);
 }
 
 .audio-header {
@@ -259,4 +266,41 @@ audio {
     background: rgba(255, 255, 255, 0.4);
     outline: none;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+/* styles.css */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleUp {
+    from {
+        transform: scale(0.9);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+.audio-container {
+    animation: fadeIn 0.5s ease-in-out, scaleUp 0.5s ease-in-out;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.audio-container:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transform: translateY(-5px);
+}
+
+.fav, .delete {
+    transition: transform 0.3s ease;
+}
+
+.fav:hover, .delete:hover {
+    transform: scale(1.1);
 }
