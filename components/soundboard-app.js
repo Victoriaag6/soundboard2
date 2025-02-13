@@ -1,5 +1,14 @@
 import { SoundBoardMethods } from './SoundBoardMethods.js';
 
+// Debounce function to limit the rate at which the search function is called
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
 class SoundBoardApp extends HTMLElement {
     constructor() {
         super();
@@ -29,6 +38,7 @@ class SoundBoardApp extends HTMLElement {
         this.shadowRoot.addEventListener("delete-playlist", (e) => {
             this.deletePlaylist(e.detail);
         });
+        this.shadowRoot.querySelector("#search-bar").addEventListener("input", debounce((e) => this.handleSearch(e), 300));
     }
 
     toggleFavorite(audioName) {
@@ -186,14 +196,18 @@ class SoundBoardApp extends HTMLElement {
         });
 
         const audioList = this.shadowRoot.querySelector(".audio-list");
-        audioList.innerHTML = displayedAudios.map(audio => 
-            `<audio-player 
-                name="${audio.name}"
-                src="${audio.src}"
-                isFavorite="${this.favList.includes(audio.name)}"
-                playlist="${this.currentPlaylist}">
-            </audio-player>`
-        ).join('');
+        if (displayedAudios.length === 0) {
+            audioList.innerHTML = `<p>No se encontraron audios</p>`;
+        } else {
+            audioList.innerHTML = displayedAudios.map(audio => 
+                `<audio-player 
+                    name="${audio.name}"
+                    src="${audio.src}"
+                    isFavorite="${this.favList.includes(audio.name)}"
+                    playlist="${this.currentPlaylist}">
+                </audio-player>`
+            ).join('');
+        }
 
         // Remove the hidden class after rendering
         requestAnimationFrame(() => {
