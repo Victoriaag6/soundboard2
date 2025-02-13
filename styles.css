@@ -261,6 +261,9 @@ audio {
     color: white;
     transition: background 0.3s ease, box-shadow 0.3s ease;
 }
+.search-bar::placeholder {
+    color: white;
+}
 
 .search-bar:focus {
     background: rgba(255, 255, 255, 0.4);

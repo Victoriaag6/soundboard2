@@ -73,7 +73,7 @@ export class SoundBoardMethods {
             playlists[playlistName] = [];
             try {
                 localStorage.setItem("playlists", JSON.stringify(playlists));
-                renderCallback(); // Llama a la función de renderizado después de agregar la nueva playlist
+                renderCallback(); 
             } catch (e) {
                 if (e.name === 'QuotaExceededError') {
                     alert("No se pudo crear la playlist. Se ha excedido el límite de almacenamiento.");

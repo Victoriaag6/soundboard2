@@ -133,7 +133,7 @@ class SoundBoardApp extends HTMLElement {
         this.shadowRoot.innerHTML = `
             <link rel="stylesheet" href="styles.css">
             <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-            <div class="container">
+            <div class="container hidden">
                 <div class="header">
                     <div class="title-background">
                         <div class="title-container">
@@ -190,6 +190,9 @@ class SoundBoardApp extends HTMLElement {
                 this.render();
             });
         });
+
+        // Remove the hidden class after rendering
+        this.shadowRoot.querySelector(".container").classList.remove("hidden");
     }
 }
 
