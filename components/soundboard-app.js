@@ -1,10 +1,19 @@
+import { getFavoriteAudios } from './methods/getFavoriteAudios.js';
+import { toggleFavorite } from './methods/toggleFavorite.js';
+import { createPlaylist } from './methods/createPlaylist.js';
+import { deletePlaylist } from './methods/deletePlaylist.js';
+import { uploadAudio } from './methods/uploadAudio.js';
+import { addAudio } from './methods/addAudio.js';
+import { addToPlaylist } from './methods/addToPlaylist.js';
+import { deleteAudio } from './methods/deleteAudio.js';
+
 class SoundBoardApp extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
         this.audioList = JSON.parse(localStorage.getItem("audioList")) || [];
         this.favList = JSON.parse(localStorage.getItem("favList")) || [];
-        this.playlists = JSON.parse(localStorage.getItem("playlists")) || { "All": this.audioList, "Fav": this.getFavoriteAudios() };
+        this.playlists = JSON.parse(localStorage.getItem("playlists")) || { "All": this.audioList, "Fav": getFavoriteAudios(this.audioList, this.favList) };
         this.currentPlaylist = "All";
         this.render();
     }
@@ -25,94 +34,44 @@ class SoundBoardApp extends HTMLElement {
         });
     }
 
-    getFavoriteAudios() {
-        return this.audioList.filter(audio => this.favList.includes(audio.name));
-    }
-
     toggleFavorite(audioName) {
-        if (this.favList.includes(audioName)) {
-            this.favList = this.favList.filter(name => name !== audioName);
-        } else {
-            this.favList.push(audioName);
-        }
-        this.playlists["Fav"] = this.getFavoriteAudios();
-        localStorage.setItem("favList", JSON.stringify(this.favList));
-        localStorage.setItem("playlists", JSON.stringify(this.playlists));
+        const result = toggleFavorite(audioName, this.favList, this.playlists);
+        this.favList = result.favList;
+        this.playlists = result.playlists;
         this.render();
     }
 
     createPlaylist() {
-        const playlistName = prompt("Nombre de la nueva playlist:");
-        if (playlistName && !this.playlists[playlistName]) {
-            this.playlists[playlistName] = [];
-            localStorage.setItem("playlists", JSON.stringify(this.playlists));
-            this.render();
-        }
+        this.playlists = createPlaylist(this.playlists);
+        this.render();
     }
 
     deletePlaylist(playlistName) {
-        if (playlistName !== "All" && playlistName !== "Fav") {
-            delete this.playlists[playlistName];
-            localStorage.setItem("playlists", JSON.stringify(this.playlists));
-            this.currentPlaylist = "All";
-            this.render();
-        }
+        this.playlists = deletePlaylist(playlistName, this.playlists);
+        this.currentPlaylist = "All";
+        this.render();
     }
 
     uploadAudio() {
-        const fileInput = document.createElement("input");
-        fileInput.type = "file";
-        fileInput.accept = "audio/*";
-        fileInput.addEventListener("change", (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const audioName = prompt("Nombre del audio:");
-                    if (!audioName || this.audioList.some(audio => audio.name === audioName)) {
-                        alert("El nombre del audio ya existe o es inválido.");
-                        return;
-                    }
-                    const audio = { name: audioName, src: e.target.result };
-                    this.addAudio(audio);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-        fileInput.click();
+        uploadAudio(this.audioList, this.playlists, (audio) => this.addAudio(audio));
     }
 
     addAudio(audio) {
-        this.audioList.push(audio);
-        this.playlists["All"].push(audio);
-        localStorage.setItem("audioList", JSON.stringify(this.audioList));
-        localStorage.setItem("playlists", JSON.stringify(this.playlists));
+        const result = addAudio(audio, this.audioList, this.playlists);
+        this.audioList = result.audioList;
+        this.playlists = result.playlists;
         this.render();
     }
 
     addToPlaylist(audioName, playlistName) {
-        const audio = this.audioList.find(a => a.name === audioName);
-        if (audio && this.playlists[playlistName]) {
-            const alreadyInPlaylist = this.playlists[playlistName].some(a => a.name === audioName);
-            if (!alreadyInPlaylist) {
-                this.playlists[playlistName].push(audio);
-                localStorage.setItem("playlists", JSON.stringify(this.playlists));
-                this.render();
-            }
-        }
+        this.playlists = addToPlaylist(audioName, playlistName, this.audioList, this.playlists);
+        this.render();
     }
 
     deleteAudio(audioName) {
-        if (this.currentPlaylist === "All") {
-            this.audioList = this.audioList.filter(audio => audio.name !== audioName);
-            Object.keys(this.playlists).forEach(playlist => {
-                this.playlists[playlist] = this.playlists[playlist].filter(audio => audio.name !== audioName);
-            });
-        } else {
-            this.playlists[this.currentPlaylist] = this.playlists[this.currentPlaylist].filter(audio => audio.name !== audioName);
-        }
-        localStorage.setItem("audioList", JSON.stringify(this.audioList));
-        localStorage.setItem("playlists", JSON.stringify(this.playlists));
+        const result = deleteAudio(audioName, this.currentPlaylist, this.audioList, this.playlists);
+        this.audioList = result.audioList;
+        this.playlists = result.playlists;
         this.render();
     }
 
