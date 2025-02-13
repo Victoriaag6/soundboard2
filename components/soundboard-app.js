@@ -86,7 +86,7 @@ class SoundBoardApp extends HTMLElement {
                     <div class="title-background">
                         <div class="title-container">
                             <span class="title">SoundBoard</span>
-                            <span class="subtitle">Instrumental assistant</span>
+                            <span class="subtitle">Save and listen to your favorite sounds</span>
                         </div>
                     </div>
                     <button id="add-audio" class="add-btn">+ Add Sound</button>
