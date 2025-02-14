@@ -191,14 +191,18 @@ class SoundBoardApp extends HTMLElement {
         });
 
         const audioList = this.shadowRoot.querySelector(".audio-list");
-        audioList.innerHTML = displayedAudios.map(audio => 
-            `<audio-player 
-                name="${audio.name}"
-                src="${audio.src}"
-                isFavorite="${this.favList.includes(audio.name)}"
-                playlist="${this.currentPlaylist}">
-            </audio-player>`
-        ).join('');
+        if (displayedAudios.length === 0) {
+            audioList.innerHTML = '<p>Aún no hay audios en esta playlist.</p>';
+        } else {
+            audioList.innerHTML = displayedAudios.map(audio => 
+                `<audio-player 
+                    name="${audio.name}"
+                    src="${audio.src}"
+                    isFavorite="${this.favList.includes(audio.name)}"
+                    playlist="${this.currentPlaylist}">
+                </audio-player>`
+            ).join('');
+        }
 
         // Remove the hidden class after rendering
         requestAnimationFrame(() => {

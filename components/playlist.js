@@ -20,7 +20,7 @@ class Playlist extends HTMLElement {
             <div class="playlist-container ${isActive ? 'active' : ''}">
                 <h3>${playlistName}</h3>
                 <div class="audio-list">
-                    ${audios.map(audio => `
+                    ${audios.length === 0 ? '<p>Aún no hay audios en esta playlist.</p>' : audios.map(audio => `
                         <audio-player 
                             name="${audio.name}"
                             src="${audio.src}"

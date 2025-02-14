@@ -24,6 +24,9 @@ class UIHandler {
 
     renderAudioList() {
         const displayedAudios = this.playlistManager.playlists[this.app.currentPlaylist] || [];
+        if (displayedAudios.length === 0) {
+            return `<p>Aún no hay audios en esta playlist.</p>`;
+        }
         return displayedAudios.map(audio => 
             `<audio-player 
                 name="${audio.name}"
