@@ -1,4 +1,5 @@
 import { SoundBoardMethods } from './SoundBoardMethods.js';
+import './playlist.js';
 
 class SoundBoardApp extends HTMLElement {
     constructor() {

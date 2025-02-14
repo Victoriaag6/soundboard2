@@ -1,3 +1,6 @@
+import { SoundBoardMethods } from './SoundBoardMethods.js';
+import './playlist.js';
+
 class UIHandler {
     constructor(audioManager, playlistManager, app) {
         this.audioManager = audioManager;
@@ -11,7 +14,11 @@ class UIHandler {
 
     renderPlaylists() {
         return Object.keys(this.playlistManager.playlists).map(playlist => 
-            `<button class="playlist-btn ${this.app.currentPlaylist === playlist ? 'active' : ''}" id="${playlist}-btn">${playlist}</button>`
+            `<playlist-component 
+                name="${playlist}" 
+                audios='${JSON.stringify(this.playlistManager.playlists[playlist])}' 
+                isActive="${this.app.currentPlaylist === playlist}">
+            </playlist-component>`
         ).join('');
     }
 
