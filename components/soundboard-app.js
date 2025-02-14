@@ -131,7 +131,6 @@ class SoundBoardApp extends HTMLElement {
         if (!this.shadowRoot.innerHTML) {
             this.shadowRoot.innerHTML = `
                 <link rel="stylesheet" href="styles.css">
-                <link rel="icon" href="data:;base64,iVBORw0KGgo=">
                 <div class="container hidden">
                     <div class="header">
                         <div class="title-background">
@@ -183,6 +182,11 @@ class SoundBoardApp extends HTMLElement {
                 this.currentPlaylist = playlist;
                 this.render();
             });
+        });
+
+        // Add event listener for the "New Playlist" button
+        this.shadowRoot.querySelector("#create-playlist").addEventListener("click", () => {
+            this.createPlaylist();
         });
 
         const audioList = this.shadowRoot.querySelector(".audio-list");
