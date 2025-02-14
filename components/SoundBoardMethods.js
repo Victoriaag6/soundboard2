@@ -6,7 +6,7 @@ export class SoundBoardMethods {
     }
 
     static isValidName(name) {
-        const regex = /^[a-zA-Z0-9 _-]+$/;
+        const regex = /^[a-zA-Z0-9 _-]{1,15}$/; 
         return regex.test(name);
     }
 
@@ -26,7 +26,7 @@ export class SoundBoardMethods {
             localStorage.setItem("playlists", JSON.stringify(playlists));
         } catch (e) {
             if (e.name === 'QuotaExceededError') {
-                alert("No se pudo actualizar la lista de favoritos. Se ha excedido el límite de almacenamiento.");
+                alert("Could not update the favorites list. Storage limit exceeded.");
                 if (favList.includes(audioName)) {
                     favList = favList.filter(name => name !== audioName);
                 } else {
@@ -42,9 +42,9 @@ export class SoundBoardMethods {
 
     static exportPlaylists(playlists, playlistName) {
         const playlistToExport = playlistName ? { [playlistName]: playlists[playlistName] } : playlists;
-        const fileName = prompt("Ingrese el nombre del archivo para exportar:", "playlists.json");
+        const fileName = prompt("Enter the file name to export:", "playlists.json");
         if (!fileName) {
-            alert("El nombre del archivo no puede estar vacío.");
+            alert("The file name cannot be empty.");
             return;
         }
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(playlistToExport));
@@ -57,17 +57,17 @@ export class SoundBoardMethods {
     }
 
     static createPlaylist(playlists, renderCallback) {
-        showModal("Nombre de la nueva playlist:", (playlistName) => {
+        showModal("New playlist name:", (playlistName) => {
             if (!playlistName) {
-                alert("El nombre de la playlist no puede estar vacío.");
+                alert("The playlist name cannot be empty.");
                 return;
             }
             if (!SoundBoardMethods.isValidName(playlistName)) {
-                alert("El nombre de la playlist contiene caracteres no permitidos.");
+                alert("The playlist name contains invalid characters.");
                 return;
             }
             if (playlists[playlistName]) {
-                alert("El nombre de la playlist ya existe.");
+                alert("The playlist name already exists.");
                 return;
             }
             playlists[playlistName] = [];
@@ -76,7 +76,7 @@ export class SoundBoardMethods {
                 renderCallback(); 
             } catch (e) {
                 if (e.name === 'QuotaExceededError') {
-                    alert("No se pudo crear la playlist. Se ha excedido el límite de almacenamiento.");
+                    alert("Could not create the playlist. Storage limit exceeded.");
                     delete playlists[playlistName];
                 } else {
                     throw e;
@@ -125,17 +125,17 @@ export class SoundBoardMethods {
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    showModal("Nombre del audio:", (audioName) => {
+                    showModal("Audio name:", (audioName) => {
                         if (!audioName) {
-                            alert("El nombre del audio no puede estar vacío.");
+                            alert("The audio name cannot be empty.");
                             return;
                         }
                         if (!SoundBoardMethods.isValidName(audioName)) {
-                            alert("El nombre del audio contiene caracteres no permitidos.");
+                            alert("The audio name contains invalid characters.");
                             return;
                         }
                         if (!SoundBoardMethods.isUniqueName(audioName, audioList)) {
-                            alert("El nombre del audio ya existe.");
+                            alert("The audio name already exists.");
                             return;
                         }
                         const audio = { name: audioName, src: e.target.result };

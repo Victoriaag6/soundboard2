@@ -5,7 +5,7 @@ export function showModal(title, callback) {
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>${title}</h2>
-            <input type="text" id="modal-input" placeholder="Enter name">
+            <input type="text" id="modal-input" placeholder="Enter name (max 15 characters)">
             <button id="modal-submit">Submit</button>
         </div>
     `;
@@ -20,7 +20,9 @@ export function showModal(title, callback) {
     modal.querySelector('.close').onclick = closeModal;
     modal.querySelector('#modal-submit').onclick = () => {
         const inputValue = modal.querySelector('#modal-input').value;
-        if (inputValue) {
+        if (inputValue.length > 15) {
+            alert("The name cannot be longer than 15 characters.");
+        } else if (inputValue) {
             callback(inputValue);
             closeModal();
         } else {
