@@ -150,7 +150,6 @@ class SoundBoardApp extends HTMLElement {
                 </div>
             `;
 
-            // Add event listeners after the elements are rendered
             this.shadowRoot.querySelector("#search-bar").addEventListener("input", (e) => this.handleSearch(e));
             this.shadowRoot.querySelector("#add-audio").addEventListener("click", () => this.uploadAudio());
             this.shadowRoot.querySelector("#export-playlists").addEventListener("click", () => SoundBoardMethods.exportPlaylists(this.playlists, this.currentPlaylist));
@@ -185,7 +184,7 @@ class SoundBoardApp extends HTMLElement {
             });
         });
 
-        // Add event listener for the "New Playlist" button
+
         this.shadowRoot.querySelector("#create-playlist").addEventListener("click", () => {
             this.createPlaylist();
         });
@@ -204,7 +203,7 @@ class SoundBoardApp extends HTMLElement {
             ).join('');
         }
 
-        // Remove the hidden class after rendering
+
         requestAnimationFrame(() => {
             this.shadowRoot.querySelector(".container").classList.remove("hidden");
         });
