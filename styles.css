@@ -189,12 +189,15 @@ audio {
     background-color: rgba(255, 255, 255, 0.2);
     margin: 5% auto;
     padding: 20px;
-    border: 1px solid #888;
     width: 80%;
     max-width: 500px;
     border-radius: 10px;
     color: white;
     font-family: Arial, sans-serif;
+}
+
+.modal input[type="text"]::placeholder {
+    color: white;
 }
 
 .close {
@@ -236,6 +239,7 @@ audio {
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
+    
     transition: background 0.3s ease;
 }
 
